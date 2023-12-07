@@ -38,8 +38,8 @@ public class Main {
                         new JCheckBox("Pessoa juridica")
                 };
 
-                int opc1 = jp.showConfirmDialog(null, campos, "form", jp.OK_CANCEL_OPTION, jp.PLAIN_MESSAGE);
 
+                int opc1 = jp.showConfirmDialog(null, campos, "form", jp.OK_CANCEL_OPTION, jp.PLAIN_MESSAGE);
                 if(opc1 == jp.OK_OPTION) {
                     try {
                         String field1 = ((JTextField) campos[1]).getText();
@@ -69,6 +69,29 @@ public class Main {
                     break;
                     case 2:
                         //Vai listar os usiarios
+					Object[] campos = {
+						"modelo: ", new JTextField(),
+						"preco: ", new JTextField(),
+						"potencia: ", new JTextField(),
+						new JCheckBox("Portatil"),
+						new JCheckBox("Residencial")
+					}
+
+					
+					int opc1 = jp.showConfirmDialog(null, campos, "form", jp.OK_CANCEL_OPTION, jp.PLAIN_MESSAGE);
+					
+
+					String field1 = campos[1];
+					String field2 = campos[3];
+					String field3 = campos[5];
+
+					if(opc1 == jp.OK_OPTION)
+					{
+						if(((JCheckBox)campos[7]).isSelected())
+						{
+							CaixaSomPortatil cp = new CaixaSomPortatil();
+						}
+					}
 
                         break;
                     case 3:
