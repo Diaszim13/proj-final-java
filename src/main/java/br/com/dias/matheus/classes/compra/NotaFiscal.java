@@ -1,4 +1,6 @@
-package br.com.dias.matheus.classes;
+package br.com.dias.matheus.classes.compra;
+
+import br.com.dias.matheus.classes.cliente.Cliente;
 
 public class NotaFiscal {
 

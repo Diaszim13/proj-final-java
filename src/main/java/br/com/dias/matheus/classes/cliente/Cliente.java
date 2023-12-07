@@ -1,7 +1,10 @@
-package br.com.dias.matheus.classes;
+package br.com.dias.matheus.classes.cliente;
+
+import javax.annotation.processing.Generated;
 
 public abstract class Cliente {
-
+    //@Generated("id")
+    //public Long id;
     public String nome;
 
     public Cliente(String nome) {

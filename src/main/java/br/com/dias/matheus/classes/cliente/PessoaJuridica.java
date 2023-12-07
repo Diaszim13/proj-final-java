@@ -1,4 +1,4 @@
-package br.com.dias.matheus.classes;
+package br.com.dias.matheus.classes.cliente;
 
 public class PessoaJuridica extends Cliente {
     public String cnpj;

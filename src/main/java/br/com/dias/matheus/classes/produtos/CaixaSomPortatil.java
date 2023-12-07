@@ -1,4 +1,4 @@
-package br.com.dias.matheus.classes;
+package br.com.dias.matheus.classes.produtos;
 
 public class CaixaSomPortatil extends Produto {
 
