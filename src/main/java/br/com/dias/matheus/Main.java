@@ -46,11 +46,14 @@ public class Main {
                             PessoaFisica pf = new PessoaFisica(field1, field2);
                             if (pf.getCpf() != "") {
                                 System.out.println(pf.toString());
+
+								jp.showMessageDialog(null, "Cadastrado com sucesso:" + pf.toString());
                             }
                         } else if (((JCheckBox) campos[5]).isSelected()) {
                             PessoaJuridica pJ = new PessoaJuridica(field1, field1);
                             if (pJ.getCnpj() != "") {
-                                System.out.println(pJ.toString());
+									System.out.println(pJ.toString());
+								jp.showMessageDialog(null, "Cadastrado com sucesso:" + pJ.toString());
                             }
                         }
                     } catch (Exception ex) {
