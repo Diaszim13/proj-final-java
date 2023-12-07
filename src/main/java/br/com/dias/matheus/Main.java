@@ -47,8 +47,9 @@ public class Main {
                         if (((JCheckBox)campos[4]).isSelected()) {
                             if(DTO.validateCPFCNPJ(field2, true)){
                                 PessoaFisica pf = new PessoaFisica(field1, field2);
+                            
                                 jp.showMessageDialog(null, "Cadastrado com sucesso:" + pf.toString());
-                            } else {
+							} else {
                                 throw new Exception("CPF invalido");
 
                             }
@@ -89,14 +90,28 @@ public class Main {
 					{
 						if(((JCheckBox)campos[7]).isSelected())
 						{
-							CaixaSomPortatil cp = new CaixaSomPortatil();
+							CaixaSomPortatil cp = new CaixaSomPortatil(field1, field2, field3);
+
+							if(cp)
+							{
+                                jp.showMessageDialog(null, "Cadastrado com sucesso:" + cp.toString());
+							}
+						
+						}
+						if(((JCheckBox)campos[8]).isSelected())
+						{
+							CaixaSomResidencial cr = new CaixaSomResidencial(field1, field2, field3);
+							if(cr)
+							{
+                                jp.showMessageDialog(null, "Cadastrado com sucesso:" + cr.toString());
+							}
 						}
 					}
-
                         break;
                     case 3:
-                        //Vai cadastrar o usuario
-                        break;
+						// FAZER A COMPRA e emitir a nota fiscal
+
+						break;
                     case 4:
                         //Vai cadastrar o usuario
                         break;
