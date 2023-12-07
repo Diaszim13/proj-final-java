@@ -1,6 +1,7 @@
 package br.com.dias.matheus;
 
 import br.com.dias.matheus.classes.cliente.Cliente;
+import br.com.dias.matheus.classes.cliente.ClienteDTO;
 import br.com.dias.matheus.classes.cliente.PessoaFisica;
 import br.com.dias.matheus.classes.cliente.PessoaJuridica;
 import br.com.dias.matheus.classes.produtos.Produto;
@@ -20,6 +21,7 @@ public class Main {
                 "Vender produto",
                 "Emitir nota fiscal",
         };
+        ClienteDTO DTO = new ClienteDTO();
         int opc = 55;
         do {
         opc = jp.showOptionDialog(null, "Escolha uma opção!", "Sistema", JOptionPane.DEFAULT_OPTION,
@@ -43,17 +45,19 @@ public class Main {
                         String field1 = ((JTextField) campos[1]).getText();
                         String field2 = ((JTextField) campos[3]).getText();
                         if (((JCheckBox)campos[4]).isSelected()) {
-                            PessoaFisica pf = new PessoaFisica(field1, field2);
-                            if (pf.getCpf() != "") {
-                                System.out.println(pf.toString());
+                            if(DTO.validateCPFCNPJ(field2, true)){
+                                PessoaFisica pf = new PessoaFisica(field1, field2);
+                                jp.showMessageDialog(null, "Cadastrado com sucesso:" + pf.toString());
+                            } else {
+                                throw new Exception("CPF invalido");
 
-								jp.showMessageDialog(null, "Cadastrado com sucesso:" + pf.toString());
                             }
                         } else if (((JCheckBox) campos[5]).isSelected()) {
-                            PessoaJuridica pJ = new PessoaJuridica(field1, field1);
-                            if (pJ.getCnpj() != "") {
-									System.out.println(pJ.toString());
+                            if (DTO.validateCPFCNPJ(field2, false)) {
+                                PessoaJuridica pJ = new PessoaJuridica(field1, field2);
 								jp.showMessageDialog(null, "Cadastrado com sucesso:" + pJ.toString());
+                            } else {
+                                throw new Exception("CPNJ invalido");
                             }
                         }
                     } catch (Exception ex) {
