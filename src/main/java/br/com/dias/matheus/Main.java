@@ -1,12 +1,14 @@
 package br.com.dias.matheus;
 
-import br.com.dias.matheus.classes.cliente.Cliente;
-import br.com.dias.matheus.classes.cliente.ClienteDTO;
-import br.com.dias.matheus.classes.cliente.PessoaFisica;
-import br.com.dias.matheus.classes.cliente.PessoaJuridica;
+import br.com.dias.matheus.classes.cliente.*;
+import br.com.dias.matheus.classes.compra.NotaFiscal;
+import br.com.dias.matheus.classes.produtos.CaixaSomPortatil;
+import br.com.dias.matheus.classes.produtos.CaixaSomResidencial;
 import br.com.dias.matheus.classes.produtos.Produto;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 
@@ -21,12 +23,16 @@ public class Main {
                 "Vender produto",
                 "Emitir nota fiscal",
         };
-        ClienteDTO DTO = new ClienteDTO();
+        cpfValidator validator = new cpfValidator();
+        ArrayList<Produto> produtos = new ArrayList<Produto>();
+        ArrayList<Cliente> clientes = new ArrayList<Cliente>();
+
         int opc = 55;
         do {
         opc = jp.showOptionDialog(null, "Escolha uma opção!", "Sistema", JOptionPane.DEFAULT_OPTION,
                 JOptionPane.DEFAULT_OPTION, null, opts, opts[0]);
             System.out.println(opc);
+
         switch (opc)
         {
             case 0:
@@ -45,17 +51,18 @@ public class Main {
                         String field1 = ((JTextField) campos[1]).getText();
                         String field2 = ((JTextField) campos[3]).getText();
                         if (((JCheckBox)campos[4]).isSelected()) {
-                            if(DTO.validateCPFCNPJ(field2, true)){
+                            if(validator.validateCPFCNPJ(field2, true)){
                                 PessoaFisica pf = new PessoaFisica(field1, field2);
-                            
+                                clientes.add(pf);
                                 jp.showMessageDialog(null, "Cadastrado com sucesso:" + pf.toString());
 							} else {
                                 throw new Exception("CPF invalido");
 
                             }
                         } else if (((JCheckBox) campos[5]).isSelected()) {
-                            if (DTO.validateCPFCNPJ(field2, false)) {
+                            if (validator.validateCPFCNPJ(field2, false)) {
                                 PessoaJuridica pJ = new PessoaJuridica(field1, field2);
+                                clientes.add(pJ);
 								jp.showMessageDialog(null, "Cadastrado com sucesso:" + pJ.toString());
                             } else {
                                 throw new Exception("CPNJ invalido");
@@ -70,46 +77,87 @@ public class Main {
                     break;
                     case 2:
                         //Vai listar os usiarios
-					Object[] campos = {
+					Object[] campos1 = {
 						"modelo: ", new JTextField(),
 						"preco: ", new JTextField(),
 						"potencia: ", new JTextField(),
 						new JCheckBox("Portatil"),
 						new JCheckBox("Residencial")
-					}
+					};
 
 					
-					int opc1 = jp.showConfirmDialog(null, campos, "form", jp.OK_CANCEL_OPTION, jp.PLAIN_MESSAGE);
+					int opc2 = jp.showConfirmDialog(null, campos1, "form", jp.OK_CANCEL_OPTION, jp.PLAIN_MESSAGE);
 					
 
-					String field1 = campos[1];
-					String field2 = campos[3];
-					String field3 = campos[5];
+					String field1 = (((JTextField)campos1[1]).getText());
+                    //Como posso pegar um valor double de um jtextfield
 
-					if(opc1 == jp.OK_OPTION)
+					Double field2 = Double.parseDouble(((JTextField)campos1[3]).getText());
+					Integer field3 = Integer.parseInt(((JTextField)campos1[5]).getText());
+
+					if(opc2 == jp.OK_OPTION)
 					{
-						if(((JCheckBox)campos[7]).isSelected())
+						if(((JCheckBox)campos1[6]).isSelected())
 						{
 							CaixaSomPortatil cp = new CaixaSomPortatil(field1, field2, field3);
 
-							if(cp)
+							if(cp.getModelo() != "")
 							{
                                 jp.showMessageDialog(null, "Cadastrado com sucesso:" + cp.toString());
+                                produtos.add(cp);
 							}
 						
 						}
-						if(((JCheckBox)campos[8]).isSelected())
+						if(((JCheckBox)campos1[7]).isSelected())
 						{
 							CaixaSomResidencial cr = new CaixaSomResidencial(field1, field2, field3);
-							if(cr)
+							if(cr.getModelo() != "")
 							{
                                 jp.showMessageDialog(null, "Cadastrado com sucesso:" + cr.toString());
+                                produtos.add(cr);
 							}
 						}
 					}
                         break;
                     case 3:
 						// FAZER A COMPRA e emitir a nota fiscal
+                        /*
+                         * aq eu to pensando em fazer um negocio tipo listar os produtos pelo nome para fazer a venda
+
+                         * */
+                        Object [] lista = {};
+
+                        for (Produto p : produtos) {
+                            lista = Arrays.copyOf(lista, lista.length + 1);
+                            lista[lista.length - 1] = p.getModelo();
+                        }
+
+                        int opc3 = jp.showOptionDialog(null, "Escolha uma opção!", "Sistema", JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.DEFAULT_OPTION, null, lista, lista[0]);
+
+                        if(opc3 >= 0)
+                        {
+                            Produto p = produtos.get(opc3);
+                            int confirmCompra = jp.showConfirmDialog(null, "Produto escolhido: " + p.toString(), "Deseja confirmar a compra?", jp.OK_CANCEL_OPTION, jp.PLAIN_MESSAGE);
+
+                            //Aqui eu vou fazer a compra
+                            if(confirmCompra == jp.OK_OPTION) {
+                                Object[] clientesopcs = {};
+
+                                for (Cliente c : clientes) {
+                                    clientesopcs = Arrays.copyOf(clientesopcs, clientesopcs.length + 1);
+                                    clientesopcs[clientesopcs.length - 1] = c.getNome();
+                                }
+                                int clienteSelected = jp.showOptionDialog(null, "Escolha uma opção!", "Sistema", JOptionPane.DEFAULT_OPTION,
+                                        JOptionPane.DEFAULT_OPTION, null, clientesopcs, clientesopcs[0]);
+
+                                if (clienteSelected >= 0)
+                                {
+                                    NotaFiscal nf = new NotaFiscal(1, Cliente.getNome(), p.getPreco()); //TODO AQ TENHO Q PENSAR OQUE VOU FAZER PARA ASSOCIAR O CLIENTE A NOTA FISCAL
+                                }
+                            }
+                        }
+
 
 						break;
                     case 4:

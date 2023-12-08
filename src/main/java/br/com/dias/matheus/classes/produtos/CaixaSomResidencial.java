@@ -2,19 +2,19 @@ package br.com.dias.matheus.classes.produtos;
 
 public class CaixaSomResidencial extends Produto {
 
-    private String pw;
+    private Integer pw;
 
-    public CaixaSomResidencial(String modelo, double preco, String pw)
+    public CaixaSomResidencial(String modelo, double preco, Integer pw)
     {
         super(modelo, preco);
         this.pw = pw;
     }
 
-    public String getPw() {
+    public Integer getPw() {
         return pw;
     }
 
-    public void setPw(String pw) {
+    public void setPw(Integer pw) {
         this.pw = pw;
     }
 

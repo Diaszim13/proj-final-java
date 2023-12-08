@@ -11,7 +11,7 @@ public abstract class Cliente {
         this.nome = nome;
     }
 
-    public String getNome() {
+    public static String getNome() {
         return nome;
     }
 
