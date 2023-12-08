@@ -2,9 +2,7 @@ package br.com.dias.matheus;
 
 import br.com.dias.matheus.classes.cliente.*;
 import br.com.dias.matheus.classes.compra.NotaFiscal;
-import br.com.dias.matheus.classes.produtos.CaixaSomPortatil;
-import br.com.dias.matheus.classes.produtos.CaixaSomResidencial;
-import br.com.dias.matheus.classes.produtos.Produto;
+import br.com.dias.matheus.classes.produtos.*;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -99,7 +97,7 @@ public class Main {
 					{
 						if(((JCheckBox)campos1[6]).isSelected())
 						{
-							CaixaSomPortatil cp = new CaixaSomPortatil(field1, field2, field3);
+							CaixaSomPortatil cp = new CaixaSomPortatil(field2, field2, field3);
 
 							if(cp.getModelo() != "")
 							{
@@ -120,11 +118,6 @@ public class Main {
 					}
                         break;
                     case 3:
-						// FAZER A COMPRA e emitir a nota fiscal
-                        /*
-                         * aq eu to pensando em fazer um negocio tipo listar os produtos pelo nome para fazer a venda
-
-                         * */
                         Object [] lista = {};
 
                         for (Produto p : produtos) {
@@ -151,14 +144,25 @@ public class Main {
                                 int clienteSelected = jp.showOptionDialog(null, "Escolha uma opção!", "Sistema", JOptionPane.DEFAULT_OPTION,
                                         JOptionPane.DEFAULT_OPTION, null, clientesopcs, clientesopcs[0]);
 
+
+								Cliente Cliente = clientes.get(clienteSelected);
+
                                 if (clienteSelected >= 0)
                                 {
-                                    NotaFiscal nf = new NotaFiscal(1, Cliente.getNome(), p.getPreco()); //TODO AQ TENHO Q PENSAR OQUE VOU FAZER PARA ASSOCIAR O CLIENTE A NOTA FISCAL
-                                }
+                                    NotaFiscal nf = new NotaFiscal(1, cliente, p.getPreco()); 
+									
+									if(nf.getCliente() != null)
+									{
+										jp.showMessageDialog(null, "Compra realizada com sucesso: " + nf.toString());
+									}
+									else
+									{
+										jp.showMessageDialog(null, "Erro ao realizar a compra");
+									}
+
+								}
                             }
                         }
-
-
 						break;
                     case 4:
                         //Vai cadastrar o usuario
