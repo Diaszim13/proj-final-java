@@ -93,13 +93,13 @@ public class Main {
 					Double field2 = Double.parseDouble(((JTextField)campos1[3]).getText());
 					Integer field3 = Integer.parseInt(((JTextField)campos1[5]).getText());
 
-					if(opc2 == jp.OK_OPTION)
+					if(opc2 == JOptionPane.OK_OPTION)
 					{
 						if(((JCheckBox)campos1[6]).isSelected())
 						{
-							CaixaSomPortatil cp = new CaixaSomPortatil(field2, field2, field3);
+							CaixaSomPortatil cp = new CaixaSomPortatil(field1, field2, field3);
 
-							if(cp.getModelo() != "")
+							if(!cp.getModelo().equals(""))
 							{
                                 jp.showMessageDialog(null, "Cadastrado com sucesso:" + cp.toString());
                                 produtos.add(cp);
@@ -109,7 +109,7 @@ public class Main {
 						if(((JCheckBox)campos1[7]).isSelected())
 						{
 							CaixaSomResidencial cr = new CaixaSomResidencial(field1, field2, field3);
-							if(cr.getModelo() != "")
+							if(!cr.getModelo().equals(""))
 							{
                                 jp.showMessageDialog(null, "Cadastrado com sucesso:" + cr.toString());
                                 produtos.add(cr);
@@ -126,7 +126,7 @@ public class Main {
                         }
 
                         int opc3 = jp.showOptionDialog(null, "Escolha uma opção!", "Sistema", JOptionPane.DEFAULT_OPTION,
-                                JOptionPane.DEFAULT_OPTION, null, lista, lista[0]);
+                                JOptionPane.PLAIN_MESSAGE, null, lista, lista[0]);
 
                         if(opc3 >= 0)
                         {
@@ -145,7 +145,7 @@ public class Main {
                                         JOptionPane.DEFAULT_OPTION, null, clientesopcs, clientesopcs[0]);
 
 
-								Cliente Cliente = clientes.get(clienteSelected);
+								Cliente cliente = clientes.get(clienteSelected);
 
                                 if (clienteSelected >= 0)
                                 {
@@ -165,7 +165,9 @@ public class Main {
                         }
 						break;
                     case 4:
-                        //Vai cadastrar o usuario
+                        //Ver historico de compras
+                        NotaFiscal nf = new NotaFiscal();
+                        jp.showMessageDialog(null, "Historico de compras: " + nf.toString());
                         break;
                 }
         }while (opc >= 0);

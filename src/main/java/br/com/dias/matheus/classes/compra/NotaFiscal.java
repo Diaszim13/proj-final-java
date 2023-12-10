@@ -17,6 +17,10 @@ public class NotaFiscal {
         this.valorCompra = valorCompra;
     }
 
+    public NotaFiscal() {
+
+    }
+
     public int getNumero() {
         return numero;
     }
