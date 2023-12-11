@@ -14,7 +14,7 @@ public class Main {
     public static void main(String[] args) {
         JOptionPane jp = new JOptionPane();
 
-        Object[] opts = {"Cadastrar user",
+        Object[] opts = {"Cadastrar useruario",
                 "Ver usuarios",
                 "Cadastrar produtos",
                 "Vender produto",
@@ -71,7 +71,7 @@ public class Main {
                         jp.showMessageDialog(null, ex.getMessage());
                     }
                 }
-                    break;
+							break;
             case 1:
                 jp.showMessageDialog(null, "Lista de usuarios: " + clientes.toString());
                 break;
