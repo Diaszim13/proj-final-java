@@ -13,7 +13,6 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         JOptionPane jp = new JOptionPane();
-        jp.createDialog("Bem vindo ao sistema");
 
         Object[] opts = {"Cadastrar user",
                 "Ver usuarios",
@@ -21,9 +20,11 @@ public class Main {
                 "Vender produto",
                 "Emitir nota fiscal",
         };
+
         cpfValidator validator = new cpfValidator();
         ArrayList<Produto> produtos = new ArrayList<Produto>();
         ArrayList<Cliente> clientes = new ArrayList<Cliente>();
+        ArrayList<NotaFiscal> notas = new ArrayList<NotaFiscal>();
 
         int opc = 55;
         do {
@@ -34,7 +35,6 @@ public class Main {
         switch (opc)
         {
             case 0:
-                //Vai cadastrar o usuario
                 Object[] campos = {
                             "nome: ", new JTextField(),
                         "documento: ", new JTextField(),
@@ -44,37 +44,38 @@ public class Main {
 
 
                 int opc1 = jp.showConfirmDialog(null, campos, "form", jp.OK_CANCEL_OPTION, jp.PLAIN_MESSAGE);
-                if(opc1 == jp.OK_OPTION) {
+
+                if(opc1 == JOptionPane.OK_OPTION) {
                     try {
                         String field1 = ((JTextField) campos[1]).getText();
                         String field2 = ((JTextField) campos[3]).getText();
-                        if (((JCheckBox)campos[4]).isSelected()) {
-                            if(validator.validateCPFCNPJ(field2, true)){
-                                PessoaFisica pf = new PessoaFisica(field1, field2);
-                                clientes.add(pf);
-                                jp.showMessageDialog(null, "Cadastrado com sucesso:" + pf.toString());
-							} else {
-                                throw new Exception("CPF invalido");
 
-                            }
+                        if(field1.equals("") || field2.equals("")) throw new Exception("Campos vazios");
+                        if(!((JCheckBox)campos[4]).isSelected() && !((JCheckBox)campos[5]).isSelected()) throw new Exception("Selecione uma opção");
+                        if(((JCheckBox)campos[4]).isSelected() && ((JCheckBox)campos[5]).isSelected()) throw new Exception("Selecione apenas uma opção");
+
+                        if (((JCheckBox)campos[4]).isSelected()) {
+                            if(!validator.validateCPFCNPJ(field2, true)) throw new Exception("CPF invalido");
+
+                            PessoaFisica pf = new PessoaFisica(field1, field2);
+                            clientes.add(pf);
+                            jp.showMessageDialog(null, "Cadastrado com sucesso:" + pf.toString());
+
                         } else if (((JCheckBox) campos[5]).isSelected()) {
-                            if (validator.validateCPFCNPJ(field2, false)) {
-                                PessoaJuridica pJ = new PessoaJuridica(field1, field2);
-                                clientes.add(pJ);
-								jp.showMessageDialog(null, "Cadastrado com sucesso:" + pJ.toString());
-                            } else {
-                                throw new Exception("CPNJ invalido");
-                            }
+                            if(!validator.validateCPFCNPJ(field2, false)) throw new Exception("CPNJ invalido");
+                            PessoaJuridica pJ = new PessoaJuridica(field1, field2);
+                            clientes.add(pJ);
+                            jp.showMessageDialog(null, "Cadastrado com sucesso:" + pJ.toString());
                         }
                     } catch (Exception ex) {
-                        System.out.println(ex.getMessage());
+                        jp.showMessageDialog(null, ex.getMessage());
                     }
                 }
-                    //jp.showOptionDialog(null, "Cadastre os dados!", "Sistema", campos,
-                    //      JOptionPane.DEFAULT_OPTION, null, campos, opts[0]);
                     break;
-                    case 2:
-                        //Vai listar os usiarios
+            case 1:
+                jp.showMessageDialog(null, "Lista de usuarios: " + clientes.toString());
+                break;
+            case 2:
 					Object[] campos1 = {
 						"modelo: ", new JTextField(),
 						"preco: ", new JTextField(),
@@ -82,13 +83,10 @@ public class Main {
 						new JCheckBox("Portatil"),
 						new JCheckBox("Residencial")
 					};
-
 					
 					int opc2 = jp.showConfirmDialog(null, campos1, "form", jp.OK_CANCEL_OPTION, jp.PLAIN_MESSAGE);
-					
 
 					String field1 = (((JTextField)campos1[1]).getText());
-                    //Como posso pegar um valor double de um jtextfield
 
 					Double field2 = Double.parseDouble(((JTextField)campos1[3]).getText());
 					Integer field3 = Integer.parseInt(((JTextField)campos1[5]).getText());
@@ -103,7 +101,7 @@ public class Main {
 							{
                                 jp.showMessageDialog(null, "Cadastrado com sucesso:" + cp.toString());
                                 produtos.add(cp);
-							}
+                            }
 						
 						}
 						if(((JCheckBox)campos1[7]).isSelected())
@@ -150,7 +148,7 @@ public class Main {
                                 if (clienteSelected >= 0)
                                 {
                                     NotaFiscal nf = new NotaFiscal(1, cliente, p.getPreco()); 
-									
+								    notas.add(nf);
 									if(nf.getCliente() != null)
 									{
 										jp.showMessageDialog(null, "Compra realizada com sucesso: " + nf.toString());
@@ -166,8 +164,7 @@ public class Main {
 						break;
                     case 4:
                         //Ver historico de compras
-                        NotaFiscal nf = new NotaFiscal();
-                        jp.showMessageDialog(null, "Historico de compras: " + nf.toString());
+                        jp.showMessageDialog(null, "Historico de compras: " + notas.toString());
                         break;
                 }
         }while (opc >= 0);

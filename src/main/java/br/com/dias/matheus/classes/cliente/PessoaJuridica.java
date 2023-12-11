@@ -21,5 +21,13 @@ public class PessoaJuridica extends Cliente {
         if(valor <= 0) throw new Exception("O numero precisa ser mais q 0");
         return (valor * 20) / 100;
     }
+
+    @Override
+    public String toString() {
+        return "PessoaJuridica{" +
+                "nome='" + nome + '\'' +
+                ", cnpj='" + cnpj + '\'' +
+                '}';
+    }
 }
 
