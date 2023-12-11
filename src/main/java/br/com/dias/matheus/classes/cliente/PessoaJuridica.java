@@ -18,8 +18,14 @@ public class PessoaJuridica extends Cliente {
 
     @Override
     public double calculaDesconto(double valor) throws Exception {
-        if(valor <= 0) throw new Exception("O numero precisa ser mais q 0");
-        return (valor * 20) / 100;
+
+		try {
+			if(valor <= 0) throw new Exception("O  valor precisa ser maior que 0");
+			return (valor * 20) / 100;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
     }
 
     @Override

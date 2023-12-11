@@ -23,6 +23,7 @@ public class CaixaSomResidencial extends Produto {
         return "CaixaSomResidencial{" +
                 "pw='" + pw + '\'' +
                 ", modelo='" + modelo + '\'' +
-                '}';
+					", preco='" + preco + '\'' +
+					'}';
     }
 }

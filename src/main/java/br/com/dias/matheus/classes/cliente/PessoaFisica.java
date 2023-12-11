@@ -20,9 +20,16 @@ public class PessoaFisica extends Cliente {
 
     @Override
     public double calculaDesconto(double valor) throws Exception {
-        if(valor <= 0) throw new Exception("O  valor precisa ser maior que 0");
+		try
+		{
+			if(valor <= 0) throw new Exception("O  valor precisa ser maior que 0");
+			return (valor * 15) / 100;
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
 
-        return (valor * 15) / 100;
     }
 
     @Override
