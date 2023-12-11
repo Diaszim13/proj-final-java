@@ -19,5 +19,5 @@ public abstract class Cliente {
         this.nome = nome;
     }
 
-    public abstract double calculaDesconto(double valor, int desc) throws Exception;
+    public abstract double calculaDesconto(double valor) throws Exception;
 }

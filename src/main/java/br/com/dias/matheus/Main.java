@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         JOptionPane jp = new JOptionPane();
 
         Object[] opts = {"Cadastrar useruario",
@@ -119,6 +119,7 @@ public class Main {
                         Object [] lista = {};
 
                         for (Produto p : produtos) {
+                            //aq CRIA um array de produtos para mostrar no showOptionDialog
                             lista = Arrays.copyOf(lista, lista.length + 1);
                             lista[lista.length - 1] = p.getModelo();
                         }
@@ -136,6 +137,7 @@ public class Main {
                                 Object[] clientesopcs = {};
 
                                 for (Cliente c : clientes) {
+                                    //AQui criei um array de clientes para mostrar no showOptionDialog
                                     clientesopcs = Arrays.copyOf(clientesopcs, clientesopcs.length + 1);
                                     clientesopcs[clientesopcs.length - 1] = c.getNome();
                                 }
@@ -147,7 +149,9 @@ public class Main {
 
                                 if (clienteSelected >= 0)
                                 {
-                                    NotaFiscal nf = new NotaFiscal(1, cliente, p.getPreco()); 
+                                    p.setPreco(p.getPreco() - cliente.calculaDesconto(p.getPreco()));
+                                    int numero = (int) (Math.random() * 1000); //AQUI decidi gerar um numero aleatorio para ser o numero da nota fiscal
+                                    NotaFiscal nf = new NotaFiscal(numero, cliente, p.getPreco());
 								    notas.add(nf);
 									if(nf.getCliente() != null)
 									{

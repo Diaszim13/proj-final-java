@@ -2,7 +2,7 @@ package br.com.dias.matheus.classes.cliente;
 
 public class PessoaFisica extends Cliente {
 
-    private String cpf;
+    private static String cpf;
 
     public PessoaFisica(String nome, String cpf) {
         super(nome);
@@ -10,7 +10,7 @@ public class PessoaFisica extends Cliente {
     }
 
 
-    public String getCpf() {
+    public static String getCpf() {
         return cpf;
     }
 
@@ -19,7 +19,7 @@ public class PessoaFisica extends Cliente {
     }
 
     @Override
-    public double calculaDesconto(double valor, int desc) throws Exception {
+    public double calculaDesconto(double valor) throws Exception {
         if(valor <= 0) throw new Exception("O  valor precisa ser maior que 0");
 
         return (valor * 15) / 100;

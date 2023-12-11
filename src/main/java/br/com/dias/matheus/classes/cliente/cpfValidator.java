@@ -5,7 +5,9 @@ public class cpfValidator {
     // AQ vai ser o seguinte vai validar se o cara é pf ou pj pela flag isFisica
     public boolean validateCPFCNPJ(String documento, boolean isFisica) {
         if (isFisica) {
+            if(documento.equals(PessoaFisica.getCpf())) return false;
             if(documento.equals("") || documento == null) return false;
+            if(!documento.matches("[0-9]+")) return false;
             if(documento.length() != 11) return false;
 
             String cpf = documento.replaceAll("[^0-9]", "");
@@ -18,8 +20,10 @@ public class cpfValidator {
                 return false;
             }
         } else {
+            if(documento.equals(PessoaJuridica.getCnpj())) return false;
             if(!documento.equals("")) return false;
             if(documento.length() != 14) return false;
+            if(!documento.matches("[0-9]+")) return false;
 
             String cnpj = documento.replaceAll("[^0-9]", "");
             if (cnpj.length() != 14) {
