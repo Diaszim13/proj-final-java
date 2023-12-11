@@ -168,7 +168,13 @@ public class Main {
 						break;
                     case 4:
                         //Ver historico de compras
-                        jp.showMessageDialog(null, "Historico de compras: " + notas.toString());
+						try {
+							if(notas.size() == 0) throw new Exception("Nenhuma compra realizada");
+						jp.showMessageDialog(null, "Historico de compras: " + notas.toString());
+						} catch (Exception e) {
+							jp.showMessageDialog(null, e.getMessage());
+						}
+
                         break;
                 }
         }while (opc >= 0);

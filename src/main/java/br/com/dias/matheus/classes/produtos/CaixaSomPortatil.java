@@ -21,7 +21,8 @@ public class CaixaSomPortatil extends Produto {
     @Override
     public String toString() {
         return "CaixaSomPortatil{" +
-                "bateria=" + bateria +
+			"preco=" + preco +
+				"bateria=" + bateria +
                 ", modelo='" + modelo + '\'' +
                 '}';
     }
