@@ -14,7 +14,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         JOptionPane jp = new JOptionPane();
 
-        Object[] opts = {"Cadastrar useruario",
+        Object[] opts = {"Cadastrar usuario",
                 "Ver usuarios",
                 "Cadastrar produtos",
                 "Vender produto",
@@ -155,6 +155,7 @@ public class Main {
                                         int numero = (int) (Math.random() * 1000); //AQUI decidi gerar um numero aleatorio para ser o numero da nota fiscal
                                         if (notas.contains(numero)) numero = (int) (Math.random() * 1000);
                                         NotaFiscal nf = new NotaFiscal(numero, cliente, p.getPreco());
+                                        cliente.setSaldo(cliente.getSaldo() - p.getPreco());
                                         notas.add(nf);
                                         if (nf.getCliente() != null) {
                                             jp.showMessageDialog(null, "Compra realizada com sucesso: " + nf.toString());
@@ -208,7 +209,6 @@ public class Main {
                     } catch (Exception e) {
                         jp.showMessageDialog(null, e.getMessage());
                     }
-
                     break;
             }
         } while (opc >= 0);
