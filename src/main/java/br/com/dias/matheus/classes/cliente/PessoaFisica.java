@@ -4,8 +4,8 @@ public class PessoaFisica extends Cliente {
 
     private static String cpf;
 
-    public PessoaFisica(String nome, String cpf) {
-        super(nome);
+    public PessoaFisica(String nome, String cpf, Double saldo) {
+        super(nome, saldo);
         this.cpf = cpf;
     }
 
@@ -18,6 +18,8 @@ public class PessoaFisica extends Cliente {
         this.cpf = cpf;
     }
 
+
+
     @Override
     public double calculaDesconto(double valor) throws Exception {
 		try
@@ -29,7 +31,7 @@ public class PessoaFisica extends Cliente {
 		{
 			System.out.println(e.getMessage());
 		}
-
+    return 0;
     }
 
     @Override
@@ -37,6 +39,7 @@ public class PessoaFisica extends Cliente {
         return "PessoaFisica{" +
                 "cpf='" + cpf + '\'' +
                 ", nome='" + nome + '\'' +
+                ", saldo='" + saldo + '\'' +
                 '}';
     }
 }

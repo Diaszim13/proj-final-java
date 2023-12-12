@@ -3,8 +3,8 @@ package br.com.dias.matheus.classes.cliente;
 public class PessoaJuridica extends Cliente {
     public static String cnpj;
 
-    public PessoaJuridica(String nome, String cnpj) {
-        super(nome);
+    public PessoaJuridica(String nome, String cnpj, Double saldo) {
+        super(nome, saldo);
         this.cnpj = cnpj;
     }
 
@@ -25,6 +25,7 @@ public class PessoaJuridica extends Cliente {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
+        return 0;
 
     }
 
@@ -33,6 +34,7 @@ public class PessoaJuridica extends Cliente {
         return "PessoaJuridica{" +
                 "nome='" + nome + '\'' +
                 ", cnpj='" + cnpj + '\'' +
+                ", saldo='" + saldo + '\'' +
                 '}';
     }
 }
