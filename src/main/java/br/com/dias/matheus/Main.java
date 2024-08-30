@@ -1,5 +1,6 @@
 package br.com.dias.matheus;
 
+import br.com.dias.matheus.classes.carrinho.Carrinho;
 import br.com.dias.matheus.classes.cliente.*;
 import br.com.dias.matheus.classes.compra.NotaFiscal;
 import br.com.dias.matheus.classes.produtos.*;
@@ -20,6 +21,7 @@ public class Main {
                 "Vender produto",
                 "estornar compra compra",
                 "Emitir nota fiscal",
+                "Encerrar sistema"
         };
 
         cpfValidator validator = new cpfValidator();
@@ -72,7 +74,6 @@ public class Main {
                             }
                         } catch (Exception ex) {
                             jp.showMessageDialog(null, ex.getMessage());
-
                         }
                     }
                     break;
@@ -130,6 +131,9 @@ public class Main {
 
                     if (clienteSelected >= 0) {
                         {
+                            //Aq a compra vai ser feita em base do carrinho
+                            Carrinho carrinho = new Carrinho(cliente, new ArrayList<>());
+
                             try {
                                 Object[] lista = {};
 
@@ -151,15 +155,18 @@ public class Main {
 
                                     //Aqui eu vou fazer a compra
                                     if (confirmCompra == jp.OK_OPTION) {
-                                        p.setPreco(p.getPreco() - cliente.calculaDesconto(p.getPreco()));
+                                        Double produtoNovoPreco = p.getPreco() - cliente.calculaDesconto(p.getPreco());
                                         int numero = (int) (Math.random() * 1000); //AQUI decidi gerar um numero aleatorio para ser o numero da nota fiscal
                                         if (notas.contains(numero)) numero = (int) (Math.random() * 1000);
-                                        NotaFiscal nf = new NotaFiscal(numero, cliente, p.getPreco());
+                                        NotaFiscal nf = new NotaFiscal(numero, cliente, produtoNovoPreco);
                                         cliente.setSaldo(cliente.getSaldo() - p.getPreco());
                                         notas.add(nf);
-                                        if (nf.getCliente() != null) {
+                                        if (nf.getCliente() != null)
+                                        {
                                             jp.showMessageDialog(null, "Compra realizada com sucesso: " + nf.toString());
-                                        } else {
+                                        }
+                                        else
+                                        {
                                             jp.showMessageDialog(null, "Erro ao realizar a compra");
                                         }
                                     }
@@ -209,6 +216,10 @@ public class Main {
                     } catch (Exception e) {
                         jp.showMessageDialog(null, e.getMessage());
                     }
+                    break;
+                case 6:
+                    jp.showMessageDialog(null, "Sistema finalizado com sucesso");
+                    opc = -1; // AQ ACHAR COMO SAIR DO SISTEMA
                     break;
             }
         } while (opc >= 0);

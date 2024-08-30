@@ -29,6 +29,4 @@ public abstract class Cliente {
     }
 
     public abstract double calculaDesconto(double valor) throws Exception;
-
-
 }
