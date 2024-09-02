@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package br.com.dias.matheus.DB.Mapper;
+package br.com.dias.matheus.DB;
 import java.sql.SQLException;
 
 /**
