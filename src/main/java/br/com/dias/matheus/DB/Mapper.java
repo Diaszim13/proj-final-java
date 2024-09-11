@@ -5,6 +5,7 @@
 package br.com.dias.matheus.DB;
 
 import br.com.dias.matheus.classes.cliente.Cliente;
+import br.com.dias.matheus.classes.produtos.Produto;
 import gameoflife.Acao;
 import gameoflife.Ator;
 import gameoflife.Tabuleiro;
@@ -24,8 +25,8 @@ public class Mapper {
         AtorMapper amp = new AtorMapper();
         amp.saveAtor(a);
     }
-    public static synchronized void save(Tabuleiro t) throws SQLException{
-        TabuleiroMapper tmp = new TabuleiroMapper();
+    public static synchronized void save(Produto p) throws SQLException{
+        ProdutoMapper tmp = new ProdutoMapper();
         tmp.saveTabuleiro(t);
     }
 }

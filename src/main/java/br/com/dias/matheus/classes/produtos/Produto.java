@@ -1,8 +1,27 @@
 package br.com.dias.matheus.classes.produtos;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "produtos")
 public class Produto {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @Column(name = "modelo", nullable = false)
     public String modelo;
+    @Column(name = "preco", nullable = false)
     public Double preco;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Produto() {}
 

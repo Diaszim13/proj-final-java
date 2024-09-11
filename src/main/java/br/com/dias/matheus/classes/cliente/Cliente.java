@@ -24,6 +24,10 @@ public abstract class Cliente {
         this.saldo = saldo;
     }
 
+    public Cliente(String nome, Double saldo) {
+
+    }
+
     public Long getId() {
         return id;
     }

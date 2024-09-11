@@ -31,7 +31,7 @@ public class ClienteMapper {
 
         while (res.next())
         {
-            clientes.add()
+//            clientes.add();
         }
 
         return clientes;

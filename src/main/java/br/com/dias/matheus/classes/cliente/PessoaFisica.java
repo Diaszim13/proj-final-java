@@ -1,11 +1,14 @@
 package br.com.dias.matheus.classes.cliente;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
 public class PessoaFisica extends Cliente {
 
     private static String cpf;
 
-    public PessoaFisica(String nome, String cpf, Double saldo) {
-        super(nome, saldo);
+    public PessoaFisica(Long id,String nome, String cpf, Double saldo) {
+        super(id, nome, saldo);
         this.cpf = cpf;
     }
 

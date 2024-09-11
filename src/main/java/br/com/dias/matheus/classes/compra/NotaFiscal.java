@@ -1,14 +1,31 @@
 package br.com.dias.matheus.classes.compra;
 
 import br.com.dias.matheus.classes.cliente.Cliente;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "nota_fiscal")
 public class NotaFiscal {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false)
+    private Long id;
 
     private int numero;
 
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
     private double valorCompra;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public NotaFiscal(int numero, Cliente cliente, double valorCompra)
     {
