@@ -7,8 +7,14 @@ public class PessoaFisica extends Cliente {
 
     private static String cpf;
 
-    public PessoaFisica(Long id,String nome, String cpf, Double saldo) {
+    public PessoaFisica(Long id, String nome, String cpf, Double saldo) {
         super(id, nome, saldo);
+        this.cpf = cpf;
+    }
+
+    public PessoaFisica(String nome, String cpf, Double saldo)
+    {
+        super( nome, saldo);
         this.cpf = cpf;
     }
 

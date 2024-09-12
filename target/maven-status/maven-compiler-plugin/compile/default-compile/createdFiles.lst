@@ -1,0 +1,15 @@
+br\com\dias\matheus\classes\compra\NotaFiscal.class
+br\com\dias\matheus\Main.class
+br\com\dias\matheus\classes\cliente\Cliente.class
+br\com\dias\matheus\classes\produtos\CaixaSomResidencial.class
+br\com\dias\matheus\classes\cliente\cpfValidator.class
+br\com\dias\matheus\DB\CompraMapper.class
+br\com\dias\matheus\classes\carrinho\Carrinho.class
+br\com\dias\matheus\DB\BDConnection.class
+br\com\dias\matheus\DB\ProdutoMapper.class
+br\com\dias\matheus\classes\cliente\PessoaJuridica.class
+br\com\dias\matheus\classes\produtos\CaixaSomPortatil.class
+br\com\dias\matheus\classes\produtos\Produto.class
+br\com\dias\matheus\DB\ErroDeChaveExterna.class
+br\com\dias\matheus\DB\ClienteMapper.class
+br\com\dias\matheus\classes\cliente\PessoaFisica.class

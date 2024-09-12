@@ -1,11 +1,14 @@
 package br.com.dias.matheus;
 
+import br.com.dias.matheus.DB.BDConnection;
+import br.com.dias.matheus.DB.ClienteMapper;
 import br.com.dias.matheus.classes.carrinho.Carrinho;
 import br.com.dias.matheus.classes.cliente.*;
 import br.com.dias.matheus.classes.compra.NotaFiscal;
 import br.com.dias.matheus.classes.produtos.*;
 
 import javax.swing.*;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -14,7 +17,6 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws Exception {
         JOptionPane jp = new JOptionPane();
-
         Object[] opts = {"Cadastrar usuario",
                 "Ver usuarios",
                 "Cadastrar produtos",
@@ -28,7 +30,7 @@ public class Main {
         ArrayList<Produto> produtos = new ArrayList<Produto>();
         ArrayList<Cliente> clientes = new ArrayList<Cliente>();
         ArrayList<NotaFiscal> notas = new ArrayList<NotaFiscal>();
-
+        ClienteMapper mapper = new ClienteMapper();
         int opc = 55;
         do {
             opc = jp.showOptionDialog(null, "Escolha uma opção!", "Sistema", JOptionPane.DEFAULT_OPTION,
@@ -64,13 +66,15 @@ public class Main {
 
                                 PessoaFisica pf = new PessoaFisica(field1, field2, field3);
                                 clientes.add(pf);
+                                mapper.saveCliente(pf);
                                 jp.showMessageDialog(null, "Cadastrado com sucesso:" + pf.toString());
 
                             } else if (((JCheckBox) campos[7]).isSelected()) {
                                 if (!validator.validateCPFCNPJ(field2, false)) throw new Exception("CPNJ invalido");
-                                PessoaJuridica pJ = new PessoaJuridica(field1, field2, field3);
-                                clientes.add(pJ);
-                                jp.showMessageDialog(null, "Cadastrado com sucesso:" + pJ.toString());
+                                PessoaJuridica pj = new PessoaJuridica(field1, field2, field3);
+                                clientes.add(pj);
+                                mapper.saveCliente(pj);
+                                jp.showMessageDialog(null, "Cadastrado com sucesso:" + pj.toString());
                             }
                         } catch (Exception ex) {
                             jp.showMessageDialog(null, ex.getMessage());

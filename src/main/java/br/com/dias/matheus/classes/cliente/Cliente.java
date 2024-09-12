@@ -6,9 +6,10 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "Cliente")
+@Inheritance(strategy = InheritanceType.JOINED)  // Estratégia de herança
 public abstract class Cliente {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     public Long id;
     public String nome;
@@ -25,7 +26,8 @@ public abstract class Cliente {
     }
 
     public Cliente(String nome, Double saldo) {
-
+        this.nome = nome;
+        this.saldo = saldo;
     }
 
     public Long getId() {

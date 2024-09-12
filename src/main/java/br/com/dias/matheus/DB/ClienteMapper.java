@@ -12,31 +12,74 @@ import java.util.List;
 public class ClienteMapper {
     public void saveCliente(Cliente cliente) throws SQLException
     {
-        Connection coon = (Connection) br.com.dias.matheus.DB.Connection.getConnection();
-        PreparedStatement pst = coon.prepareStatement("insert into Cliente values (?, ?)");
+        Connection coon = BDConnection.getConnection();
+        PreparedStatement pstmtCliente = coon.prepareStatement("insert into Cliente values (?, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
+        PreparedStatement pstmtPessoaFisica = coon.prepareStatement("INSERT INTO PessoaFisica (id, cpf) VALUES (?, ?)");;
+        ResultSet rs = null;
 
-        pst.setString(1, cliente.getNome());
-        pst.setDouble(2, cliente.getSaldo());
+        // Inserir na tabela Cliente (Superclasse)
+        pstmtCliente.setLong(1, 1);
+        pstmtCliente.setString(2, cliente.getNome());
+        pstmtCliente.setDouble(3, cliente.getSaldo());
+        pstmtCliente.executeUpdate();
 
-        pst.execute();
+
+        // Executar o insert
+        int affectedRows = pstmtCliente.executeUpdate();
+
+        if (affectedRows == 0) {
+            throw new SQLException("Falha ao inserir Cliente, nenhuma linha afetada.");
+        }
+
+        // 3. Recuperar o ID gerado para o Cliente
+        rs = pstmtCliente.getGeneratedKeys();
+        Long clienteId = null;
+        if (rs.next()) {
+            clienteId = rs.getLong(1);
+        } else {
+            throw new SQLException("Falha ao inserir Cliente, ID não obtido.");
+        }
+
+        // 4. Inserir na tabela PessoaFisica (Subclasse) com o ID do Cliente
+        pstmtPessoaFisica.setLong(1, clienteId);        // Usar o ID gerado para Cliente
+        pstmtPessoaFisica.setString(2, "12345678900");  // Definir o CPF
+
+        // Executar o insert na tabela PessoaFisica
+        pstmtPessoaFisica.executeUpdate();
+
+
+        pstmtCliente.close();
+        pstmtPessoaFisica.close();
+        coon.close();
     }
 
-    public List<Cliente> loadCliente(Cliente cliente) throws SQLException
+    public List<Cliente> listCliente(Cliente cliente) throws SQLException
     {
-        Connection coon = (Connection) br.com.dias.matheus.DB.Connection.getConnection();
+        Connection coon = BDConnection.getConnection();
         PreparedStatement pst = coon.prepareStatement("SELECT * FROM CLIENTES where id >?");
-        pst.setLong(1, cliente.getId());
         List<Cliente> clientes = new ArrayList<>();
         ResultSet res = pst.executeQuery();
 
         while (res.next())
         {
-//            clientes.add();
+            clientes.add(res.getRow(), cliente);
         }
 
         return clientes;
     }
 
+    public Cliente getClienteById(Long id) throws SQLException
+    {
+        Connection coon = BDConnection.getConnection();
+        PreparedStatement pst = coon.prepareStatement("SELECT * FROM cliente WHERE id >?");
+        pst.setLong(1, id);
+        ResultSet res = pst.executeQuery();
+
+        while (res.next())
+        {
+            return res.getRow();
+        }
+    }
 
 /*
     public List<Acao> loadAcao(Acao acao) throws SQLException{

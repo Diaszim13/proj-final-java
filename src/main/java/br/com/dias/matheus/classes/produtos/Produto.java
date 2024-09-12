@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "produtos")
+@Inheritance(strategy = InheritanceType.JOINED)  // Estratégia de herança
 public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -14,6 +15,9 @@ public class Produto {
     public String modelo;
     @Column(name = "preco", nullable = false)
     public Double preco;
+
+    @Column(name = "voltagem", nullable = false)
+    public String voltagem;
 
     public Long getId() {
         return id;
@@ -45,6 +49,14 @@ public class Produto {
 
     public void setPreco(Double preco) {
         this.preco = preco;
+    }
+
+    public String getVoltagem() {
+        return voltagem;
+    }
+
+    public void setVoltagem(String voltagem) {
+        this.voltagem = voltagem;
     }
 
     @Override
