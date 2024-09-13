@@ -3,7 +3,7 @@ package br.com.dias.matheus.classes.produtos;
 public class CaixaSomPortatil extends Produto {
 
     private int bateria;
-
+    public CaixaSomPortatil() {};
     public CaixaSomPortatil(String modelo, double preco, int bateria)
     {
         super(modelo, preco);

@@ -16,6 +16,8 @@ public abstract class Cliente {
 
     public Double saldo;
 
+    public TipoPessoa tipo;
+
     protected Cliente() {
     }
 
@@ -52,6 +54,14 @@ public abstract class Cliente {
 
     public void setSaldo(Double saldo) {
         this.saldo = saldo;
+    }
+
+    public TipoPessoa getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoPessoa tipo) {
+        this.tipo = tipo;
     }
 
     public abstract double calculaDesconto(double valor) throws Exception;

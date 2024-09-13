@@ -2,6 +2,8 @@ package br.com.dias.matheus;
 
 import br.com.dias.matheus.DB.BDConnection;
 import br.com.dias.matheus.DB.ClienteMapper;
+import br.com.dias.matheus.DB.NotaFiscalMapper;
+import br.com.dias.matheus.DB.ProdutoMapper;
 import br.com.dias.matheus.classes.carrinho.Carrinho;
 import br.com.dias.matheus.classes.cliente.*;
 import br.com.dias.matheus.classes.compra.NotaFiscal;
@@ -9,8 +11,10 @@ import br.com.dias.matheus.classes.produtos.*;
 
 import javax.swing.*;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 
@@ -21,8 +25,8 @@ public class Main {
                 "Ver usuarios",
                 "Cadastrar produtos",
                 "Vender produto",
-                "estornar compra compra",
-                "Emitir nota fiscal",
+                "estornar compra",
+                "Historico de compras",
                 "Encerrar sistema"
         };
 
@@ -31,6 +35,8 @@ public class Main {
         ArrayList<Cliente> clientes = new ArrayList<Cliente>();
         ArrayList<NotaFiscal> notas = new ArrayList<NotaFiscal>();
         ClienteMapper mapper = new ClienteMapper();
+        ProdutoMapper produtoMapper = new ProdutoMapper();
+        NotaFiscalMapper notaMapper = new NotaFiscalMapper();
         int opc = 55;
         do {
             opc = jp.showOptionDialog(null, "Escolha uma opção!", "Sistema", JOptionPane.DEFAULT_OPTION,
@@ -82,16 +88,24 @@ public class Main {
                     }
                     break;
                 case 1:
-                    jp.showMessageDialog(null, "Lista de usuarios: " + clientes.toString());
-                    break;
-                case 2:
-                    Object[] campos1 = {
-                            "modelo: ", new JTextField(),
-                            "preco: ", new JTextField(),
-                            "potencia: ", new JTextField(),
-                            new JCheckBox("Portatil"),
-                            new JCheckBox("Residencial")
-                    };
+                    try {
+                        List<Cliente> clientesList = mapper.getAllClientes();
+                        String clientesString = mapper.formatClientes(clientesList);
+                        JOptionPane.showMessageDialog(null, clientesString, "Lista de Clientes", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Erro ao recuperar clientes: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                    }
+            //jp.showMessageDialog(null, "Lista de usuarios: " + clientes.toString());
+            break;
+            case 2:
+                Object[] campos1 = {
+                        "modelo: ", new JTextField(),
+                        "preco: ", new JTextField(),
+                        "potencia: ", new JTextField(),
+                        new JCheckBox("Portatil"),
+                        new JCheckBox("Residencial")
+                };
 
                     int opc2 = jp.showConfirmDialog(null, campos1, "form", jp.OK_CANCEL_OPTION, jp.PLAIN_MESSAGE);
 
@@ -107,6 +121,7 @@ public class Main {
                             if (!cp.getModelo().equals("")) {
                                 jp.showMessageDialog(null, "Cadastrado com sucesso:" + cp.toString());
                                 produtos.add(cp);
+                                produtoMapper.saveProduto(cp);
                             }
 
                         }
@@ -115,23 +130,26 @@ public class Main {
                             if (!cr.getModelo().equals("")) {
                                 jp.showMessageDialog(null, "Cadastrado com sucesso:" + cr.toString());
                                 produtos.add(cr);
+                                produtoMapper.saveProduto(cr);
                             }
                         }
                     }
                     break;
                 case 3:
-                    Object[] clientesopcs = {};
+                    // Recuperar lista de clientes
+                    List<Cliente> clientesopcs = mapper.getAllClientes();
+                    String[] clienteOptions = mapper.formatClientesForSelection(clientesopcs);
 
-                    for (Cliente c : clientes) {
-                        //AQui criei um array de clientes para mostrar no showOptionDialog
-                        clientesopcs = Arrays.copyOf(clientesopcs, clientesopcs.length + 1);
-                        clientesopcs[clientesopcs.length - 1] = c.getNome();
-                    }
-                    int clienteSelected = jp.showOptionDialog(null, "Escolha um cliente para fazer a compra!", "Sistema", JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.DEFAULT_OPTION, null, clientesopcs, clientesopcs[0]);
-
-
-                    Cliente cliente = clientes.get(clienteSelected);
+                    // Exibir caixa de diálogo para seleção
+                    int clienteSelected = JOptionPane.showOptionDialog(null,
+                            "Escolha um cliente",
+                            "Sistema",
+                            JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.PLAIN_MESSAGE,
+                            null,
+                            clienteOptions,
+                            clienteOptions[0]);
+                    Cliente cliente = clientesopcs.get(clienteSelected);
 
                     if (clienteSelected >= 0) {
                         {
@@ -141,40 +159,56 @@ public class Main {
                             try {
                                 Object[] lista = {};
 
-                                for (Produto p : produtos) {
+                                /*for (Produto p : produtos) {
                                     //aq CRIA um array de produtos para mostrar no showOptionDialog
                                     lista = Arrays.copyOf(lista, lista.length + 1);
                                     lista[lista.length - 1] = p.getModelo() + " - " + p.getPreco();
-                                }
+                                }*/
+                                int opc3 = 0;
+                                try {
+                                    List<Produto> produtosList = produtoMapper.getAllProdutos();
+                                    String[] produtoOptions = produtoMapper.formatProdutosForSelection(produtosList);
+                                    opc3 = JOptionPane.showOptionDialog(null,
+                                            "Escolha um produto para o " + cliente.getNome() + " comprar",
+                                            "Sistema",
+                                            JOptionPane.DEFAULT_OPTION,
+                                            JOptionPane.PLAIN_MESSAGE,
+                                            null,
+                                            produtoOptions,
+                                            produtoOptions[0]);
 
-                                int opc3 = jp.showOptionDialog(null, "Escolha um produto para o " + cliente.getNome() + "Comprar", "Sistema", JOptionPane.DEFAULT_OPTION,
-                                        JOptionPane.PLAIN_MESSAGE, null, lista, lista[0]);
+                                    if (opc3 >= 0) {
+                                        Produto produtoSelecionado = produtosList.get(opc3);
+                                        // Aqui você pode fazer o que quiser com o produto selecionado
+                                        JOptionPane.showMessageDialog(null, "Você selecionou: " + produtoSelecionado.getModelo());
+                                        Produto p = produtosList.get(opc3);
+                                        if (produtoSelecionado.getPreco() > cliente.getSaldo())
+                                            throw new Exception("O  Cliente não tem dinheiro suficiente");
 
-                                if (opc3 >= 0) {
-                                    Produto p = produtos.get(opc3);
-                                    if (p.getPreco() > cliente.getSaldo())
-                                        throw new Exception("O  Cliente não tem dinheiro suficiente");
+                                        int confirmCompra = jp.showConfirmDialog(null, "Produto escolhido: " + produtoSelecionado.toString(), "Deseja confirmar a compra?", jp.OK_CANCEL_OPTION, jp.PLAIN_MESSAGE);
 
-                                    int confirmCompra = jp.showConfirmDialog(null, "Produto escolhido: " + p.toString(), "Deseja confirmar a compra?", jp.OK_CANCEL_OPTION, jp.PLAIN_MESSAGE);
-
-                                    //Aqui eu vou fazer a compra
-                                    if (confirmCompra == jp.OK_OPTION) {
-                                        Double produtoNovoPreco = p.getPreco() - cliente.calculaDesconto(p.getPreco());
-                                        int numero = (int) (Math.random() * 1000); //AQUI decidi gerar um numero aleatorio para ser o numero da nota fiscal
-                                        if (notas.contains(numero)) numero = (int) (Math.random() * 1000);
-                                        NotaFiscal nf = new NotaFiscal(numero, cliente, produtoNovoPreco);
-                                        cliente.setSaldo(cliente.getSaldo() - p.getPreco());
-                                        notas.add(nf);
-                                        if (nf.getCliente() != null)
-                                        {
-                                            jp.showMessageDialog(null, "Compra realizada com sucesso: " + nf.toString());
-                                        }
-                                        else
-                                        {
-                                            jp.showMessageDialog(null, "Erro ao realizar a compra");
+                                        //Aqui eu vou fazer a compra
+                                        if (confirmCompra == jp.OK_OPTION) {
+                                            Double produtoNovoPreco = p.getPreco() - cliente.calculaDesconto(p.getPreco());
+                                            int numero = (int) (Math.random() * 1000); //AQUI decidi gerar um numero aleatorio para ser o numero da nota fiscal
+                                            if (notas.contains(numero)) numero = (int) (Math.random() * 1000);
+                                            NotaFiscal nf = new NotaFiscal(numero, cliente, produtoNovoPreco);
+                                            cliente.setSaldo(cliente.getSaldo() - p.getPreco());
+                                            notas.add(nf);
+                                            notaMapper.createNotaFiscal(nf);
+                                            if (nf.getCliente() != null) {
+                                                jp.showMessageDialog(null, "Compra realizada com sucesso: " + nf.toString());
+                                            } else {
+                                                jp.showMessageDialog(null, "Erro ao realizar a compra");
+                                            }
                                         }
                                     }
+
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                    JOptionPane.showMessageDialog(null, "Erro ao recuperar produtos: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                                 }
+
 
                             } catch (Exception $e) {
                                 jp.showMessageDialog(null, $e.getMessage());
@@ -215,10 +249,13 @@ public class Main {
                 case 5:
                     //Ver historico de compras
                     try {
-                        if (notas.isEmpty()) throw new Exception("Nenhuma compra realizada");
-                        jp.showMessageDialog(null, "Historico de compras: " + notas.toString());
-                    } catch (Exception e) {
-                        jp.showMessageDialog(null, e.getMessage());
+                        // Recuperar lista de notas fiscais
+                        List<NotaFiscal> notasFiscais = notaMapper.getAllNotasFiscais();
+
+                        JOptionPane.showMessageDialog(null, notaMapper.formatNotasFiscais(notasFiscais));
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Erro ao recuperar notas fiscais: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                     }
                     break;
                 case 6:

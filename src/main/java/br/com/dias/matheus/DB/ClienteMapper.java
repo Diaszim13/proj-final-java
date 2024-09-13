@@ -1,6 +1,10 @@
 package br.com.dias.matheus.DB;
 
 import br.com.dias.matheus.classes.cliente.Cliente;
+import br.com.dias.matheus.classes.cliente.PessoaFisica;
+import br.com.dias.matheus.classes.cliente.PessoaJuridica;
+import br.com.dias.matheus.classes.cliente.TipoPessoa;
+import br.com.dias.matheus.classes.produtos.TipoProduto;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClienteMapper {
-    public void saveCliente(Cliente cliente) throws SQLException
+   /* public void saveCliente(Cliente cliente) throws SQLException
     {
         Connection coon = BDConnection.getConnection();
         PreparedStatement pstmtCliente = coon.prepareStatement("insert into Cliente values (?, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
@@ -52,6 +56,66 @@ public class ClienteMapper {
         pstmtPessoaFisica.close();
         coon.close();
     }
+    */
+   public void saveCliente(Cliente cliente) throws SQLException {
+       Connection conn = BDConnection.getConnection();
+       String sql;
+
+       if (cliente instanceof PessoaFisica) {
+           // SQL para inserir ou atualizar PessoaFisica
+           if (cliente.getId() == null) {
+               // Inserção
+               sql = "INSERT INTO cliente (nome, tipo, cpf,saldo) VALUES (?, 'F', ?, ?)";
+               PreparedStatement pst = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+               pst.setString(1, cliente.getNome());
+               pst.setString(2, ((PessoaFisica) cliente).getCpf());
+               pst.setDouble(3, cliente.getSaldo());
+               pst.executeUpdate();
+
+               // Obter o ID gerado
+               ResultSet rs = pst.getGeneratedKeys();
+               if (rs.next()) {
+                   cliente.setId(rs.getLong(1));
+               }
+           } else {
+               // Atualização
+               sql = "UPDATE cliente SET nome = ?, cpf = ? WHERE id = ?";
+               PreparedStatement pst = conn.prepareStatement(sql);
+               pst.setString(1, cliente.getNome());
+               pst.setString(2, ((PessoaFisica) cliente).getCpf());
+               pst.setLong(3, cliente.getId());
+
+               pst.executeUpdate();
+           }
+
+       } else if (cliente instanceof PessoaJuridica) {
+           // SQL para inserir ou atualizar PessoaJuridica
+           if (cliente.getId() == null) {
+               // Inserção
+               sql = "INSERT INTO cliente (nome, tipo, cnpj,saldo) VALUES (?, 'J', ?, ?)";
+               PreparedStatement pst = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+               pst.setString(1, cliente.getNome());
+               pst.setString(2, ((PessoaJuridica) cliente).getCnpj());
+               pst.setDouble(3, cliente.getSaldo());
+
+               pst.executeUpdate();
+
+               // Obter o ID gerado
+               ResultSet rs = pst.getGeneratedKeys();
+               if (rs.next()) {
+                   cliente.setId(rs.getLong(1));
+               }
+           } else {
+               // Atualização
+               sql = "UPDATE cliente SET nome = ?, cnpj = ? WHERE id = ?";
+               PreparedStatement pst = conn.prepareStatement(sql);
+               pst.setString(1, cliente.getNome());
+               pst.setString(2, ((PessoaJuridica) cliente).getCnpj());
+               pst.setLong(3, cliente.getId());
+               pst.executeUpdate();
+           }
+       }
+   }
 
     public List<Cliente> listCliente(Cliente cliente) throws SQLException
     {
@@ -68,83 +132,131 @@ public class ClienteMapper {
         return clientes;
     }
 
-    public Cliente getClienteById(Long id) throws SQLException
-    {
-        Connection coon = BDConnection.getConnection();
-        PreparedStatement pst = coon.prepareStatement("SELECT * FROM cliente WHERE id >?");
+    public static Cliente getClienteById(Long id) throws SQLException {
+        Connection conn = BDConnection.getConnection();
+        String sql = "SELECT * FROM cliente WHERE id = ?";
+        PreparedStatement pst = conn.prepareStatement(sql);
         pst.setLong(1, id);
         ResultSet res = pst.executeQuery();
 
-        while (res.next())
-        {
-            return res.getRow();
-        }
-    }
+        if (res.next()) {
+            //AQ USA O CAMPO TIPO PARA DIFERENCIAR
+            String codigoTipo = res.getString("tipo");
+            TipoPessoa tipoCliente = TipoPessoa.fromCodigo(codigoTipo);
 
-/*
-    public List<Acao> loadAcao(Acao acao) throws SQLException{
-        Connection c = BDConnection.getConnection();
-        PreparedStatement stmt = c.prepareStatement("SELECT * FROM mydb.Acao");
-        ResultSet rs = stmt.executeQuery();
-        List<Acao> acoes = new ArrayList<Acao>();
-        AtorMapper amp = new AtorMapper();
-        while(rs.next()){
-            String idAcao = rs.getString("idAcao");
-            int x = rs.getInt("x");
-            int y = rs.getInt("y");
-            String idAtor = rs.getString("idAtor");
 
-            /// Para manter a consistencia, procuramos recursivamente um Ator com o idAtor
-            Ator a = amp.findAtor(idAtor);
-            if(a==null){
-                throw new ErroDeChaveExterna("Ator", idAtor);
+            if (tipoCliente.equals(TipoPessoa.FISICA)) {
+                // Mapeando para PessoaFisica
+                PessoaFisica pf = new PessoaFisica();
+                pf.setId(res.getLong("id"));
+                pf.setNome(res.getString("nome"));
+                pf.setCpf(res.getString("cpf"));
+                return pf;
+            } else if (tipoCliente.equals(TipoPessoa.JURIDICA)) {
+                // Mapeando para PessoaJuridica
+                PessoaJuridica pj = new PessoaJuridica();
+                pj.setId(res.getLong("id"));
+                pj.setNome(res.getString("nome"));
+                pj.setCnpj(res.getString("cnpj"));
+                return pj;
             }
-            acoes.add(new Acao(a,x,y));
         }
-        return acoes;
+
+        // Retorna null se não encontrar o cliente com o ID fornecido
+        return null;
     }
 
-    public Ator findAtor(String id) throws SQLException{
-        Ator encontrado = null;
-        Connection c = BDConnection.getConnection();
-        PreparedStatement stmt = c.prepareStatement("SELECT * FROM mydb.Ator");
-        ResultSet rs = stmt.executeQuery();
-        List<Ator> output = new ArrayList<>();
-        TabuleiroMapper tbm = new TabuleiroMapper();
-        while(rs.next()){
-            String idAtor = rs.getString("idAtor");
-            long nivelDeSono = rs.getLong("nivelDeSono");
-            String idTabuleiro = rs.getString("idTabuleiro");
-            Tabuleiro t = tbm.readTabuleiro(idTabuleiro);
-            if (t==null){
-                throw new ErroDeChaveExterna("Tabuleiro", idTabuleiro);
+    public static List<Cliente> getAllClientes() throws SQLException {
+        List<Cliente> clientes = new ArrayList<>();
+        Connection conn = BDConnection.getConnection();
+        String sql = "SELECT * FROM cliente";
+        PreparedStatement pst = conn.prepareStatement(sql);
+        ResultSet res = pst.executeQuery();
+
+        while (res.next()) {
+            Cliente cliente;
+            String tipo = res.getString("tipo");
+
+            if ("F".equals(tipo)) {
+                cliente = new PessoaFisica();
+                ((PessoaFisica) cliente).setCpf(res.getString("cpf"));
+            } else {
+                cliente = new PessoaJuridica();
+                ((PessoaJuridica) cliente).setCnpj(res.getString("cnpj"));
             }
-            encontrado = new Ator(t, nivelDeSono, idAtor);
+
+            cliente.setId(res.getLong("id"));
+            cliente.setNome(res.getString("nome"));
+            cliente.setSaldo(res.getDouble("saldo"));
+            clientes.add(cliente);
         }
-        return encontrado;
+
+        return clientes;
     }
 
-    public void saveAtor(List<Ator> atores) throws SQLException {
-        Connection c = BDConnection.getConnection();
-        PreparedStatement stmt = c.prepareStatement("INSERT INTO Ator (idAtor, nivelDeSono, idTabuleiro) VALUES (?,?,?)");
-        for(Ator ator: atores){
-            stmt.setString(1, ator.getIdAtor());
-            stmt.setLong(2, ator.getNivelDeSono());
-            stmt.setString(3, ator.getTabuleiro().getId());
-            stmt.addBatch();
+    public String formatClientes(List<Cliente> clientes) {
+        StringBuilder sb = new StringBuilder();
+        for (Cliente cliente : clientes) {
+            sb.append("ID: ").append(cliente.getId()).append("\n");
+            sb.append("Nome: ").append(cliente.getNome()).append("\n");
+            if (cliente instanceof PessoaFisica) {
+                sb.append("CPF: ").append(((PessoaFisica) cliente).getCpf()).append("\n");
+            } else if (cliente instanceof PessoaJuridica) {
+                sb.append("CNPJ: ").append(((PessoaJuridica) cliente).getCnpj()).append("\n");
+            }
+            sb.append("-------------------------\n");
         }
-        stmt.executeBatch();
-        stmt.clearBatch();
+        return sb.toString();
     }
 
-    public void saveAtor(Ator ator) throws SQLException {
-        Connection c = BDConnection.getConnection();
-        PreparedStatement stmt = c.prepareStatement("INSERT INTO Ator (idAtor, nivelDeSono, idTabuleiro) VALUES (?,?,?)");
-        stmt.setString(1, ator.getIdAtor());
-        stmt.setLong(2, ator.getNivelDeSono());
-        stmt.setString(3, ator.getTabuleiro().getId());
-        stmt.executeUpdate();
-    }
- */
+    public String[] formatClientesForSelection(List<Cliente> clientes) {
+        String[] options = new String[clientes.size()];
 
+        for (int i = 0; i < clientes.size(); i++) {
+            Cliente cliente = clientes.get(i);
+            String descricao = "ID: " + cliente.getId() + " | Nome: " + cliente.getNome();
+            if (cliente instanceof PessoaFisica) {
+                descricao += " | CPF: " + ((PessoaFisica) cliente).getCpf();
+            } else if (cliente instanceof PessoaJuridica) {
+                descricao += " | CNPJ: " + ((PessoaJuridica) cliente).getCnpj();
+            }
+            options[i] = descricao;
+        }
+
+        return options;
+    }
+
+
+
+    public void updateCliente(Cliente cliente) throws SQLException {
+        Connection conn = BDConnection.getConnection();
+        String sql;
+
+        //AQ vou validar se é uma pessoa fisica ou juridica vendo pela instancia que ele representa
+        if (cliente instanceof PessoaFisica) {
+            // SQL para atualizar PessoaFisica
+            sql = "UPDATE cliente SET nome = ?, cpf = ? WHERE id = ?";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setString(1, cliente.getNome());
+            pst.setString(3, ((PessoaFisica) cliente).getCpf());
+            pst.setLong(4, cliente.getId());
+            pst.executeUpdate();
+
+        } else if (cliente instanceof PessoaJuridica) {
+            sql = "UPDATE cliente SET nome = ?, cnpj = ? WHERE id = ?";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setString(1, cliente.getNome());
+            pst.setString(3, ((PessoaJuridica) cliente).getCnpj());
+            pst.setLong(4, cliente.getId());
+            pst.executeUpdate();
+        }
+    }
+
+    public void deleteClienteById(Long id) throws SQLException {
+        Connection conn = BDConnection.getConnection();
+        String sql = "DELETE FROM cliente WHERE id = ?";
+        PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setLong(1, id);
+        pst.executeUpdate();
+    }
 }

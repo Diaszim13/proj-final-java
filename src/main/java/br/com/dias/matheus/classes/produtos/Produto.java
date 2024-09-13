@@ -19,6 +19,8 @@ public class Produto {
     @Column(name = "voltagem", nullable = false)
     public String voltagem;
 
+    public TipoProduto tipo;
+
     public Long getId() {
         return id;
     }
@@ -57,6 +59,14 @@ public class Produto {
 
     public void setVoltagem(String voltagem) {
         this.voltagem = voltagem;
+    }
+
+    public TipoProduto getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoProduto tipo) {
+        this.tipo = tipo;
     }
 
     @Override

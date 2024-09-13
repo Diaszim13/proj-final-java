@@ -4,6 +4,7 @@ public class CaixaSomResidencial extends Produto {
 
     private Integer pw;
 
+    public CaixaSomResidencial() {};
     public CaixaSomResidencial(String modelo, double preco, Integer pw)
     {
         super(modelo, preco);
